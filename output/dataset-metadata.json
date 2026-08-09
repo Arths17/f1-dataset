@@ -1,0 +1,248 @@
+{
+  "title": "Formula 1 World Championship (1950-2026)",
+  "id": "atharvranjan/formula-1-world-championship-1950-present",
+  "subtitle": "F1 data from 1950-2026, updated after every race",
+  "description": "A complete Formula 1 statistics dataset spanning every World Championship race, driver, constructor, and result from 1950 through the current 2026 season. This is built on top of the well-established 1950-2024 F1 dataset structure, extended with full 2025 season data and every completed round of 2026, and is kept current - updated after every race weekend.\n\nThe dataset covers 14 relational tables: races, results, qualifying, sprint results, pit stops, lap times, driver and constructor standings, plus lookup tables for drivers, constructors, circuits, seasons, and finishing status codes. It's designed for anyone doing F1 analysis, predictive modeling, or historical research - from career trajectories and team performance over decades to lap-by-lap race pace in recent seasons.\n\nSee the README for full details on what's new in this version, known data gaps, and the update methodology.",
+  "licenses": [{"name": "CC0-1.0"}],
+  "keywords": ["sports"],
+  "isPrivate": false,
+  "expectedUpdateFrequency": "weekly",
+  "resources": [
+    {
+      "path": "races.csv",
+      "description": "One row per race: season, round, circuit, name, date/time, and practice/qualifying/sprint session schedule.",
+      "schema": {
+        "fields": [
+          {"name": "raceId", "description": "Unique identifier for the race (primary key)."},
+          {"name": "year", "description": "Championship season."},
+          {"name": "round", "description": "Round number within that season."},
+          {"name": "circuitId", "description": "Foreign key to circuits.csv."},
+          {"name": "name", "description": "Official race name, e.g. 'Monaco Grand Prix'."},
+          {"name": "date", "description": "Race date (YYYY-MM-DD)."},
+          {"name": "time", "description": "Race start time (UTC), or \\N if unknown."},
+          {"name": "url", "description": "Wikipedia page for the race."},
+          {"name": "fp1_date", "description": "Free Practice 1 date."},
+          {"name": "fp1_time", "description": "Free Practice 1 start time (UTC)."},
+          {"name": "fp2_date", "description": "Free Practice 2 date."},
+          {"name": "fp2_time", "description": "Free Practice 2 start time (UTC)."},
+          {"name": "fp3_date", "description": "Free Practice 3 date."},
+          {"name": "fp3_time", "description": "Free Practice 3 start time (UTC)."},
+          {"name": "quali_date", "description": "Qualifying session date."},
+          {"name": "quali_time", "description": "Qualifying session start time (UTC)."},
+          {"name": "sprint_date", "description": "Sprint race date, or \\N if the weekend had no sprint."},
+          {"name": "sprint_time", "description": "Sprint race start time (UTC), or \\N."}
+        ]
+      }
+    },
+    {
+      "path": "results.csv",
+      "description": "Race classification results: grid position, finishing position, points, laps, race time, fastest lap, and finishing status per driver per race.",
+      "schema": {
+        "fields": [
+          {"name": "resultId", "description": "Unique identifier for the result row (primary key)."},
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "constructorId", "description": "Foreign key to constructors.csv."},
+          {"name": "number", "description": "Car number used in this race."},
+          {"name": "grid", "description": "Starting grid position."},
+          {"name": "position", "description": "Final classified finishing position, or \\N if unclassified (DNF/DSQ/etc)."},
+          {"name": "positionText", "description": "Finishing position as text; non-numeric codes like 'R' (retired), 'D' (disqualified), 'W' (withdrew) for unclassified results."},
+          {"name": "positionOrder", "description": "Numeric finishing order for sorting (classified drivers first, by position, then unclassified)."},
+          {"name": "points", "description": "Championship points scored."},
+          {"name": "laps", "description": "Laps completed."},
+          {"name": "time", "description": "Race finishing time (leader) or gap to leader, or \\N if not applicable."},
+          {"name": "milliseconds", "description": "Race time in milliseconds, or \\N."},
+          {"name": "fastestLap", "description": "Lap number of the driver's fastest lap, or \\N."},
+          {"name": "rank", "description": "Rank of this driver's fastest lap among all drivers in the race, or \\N."},
+          {"name": "fastestLapTime", "description": "Fastest lap time, or \\N."},
+          {"name": "fastestLapSpeed", "description": "Average speed on the fastest lap (km/h), or \\N. Not available from the data source for 2025/2026 races."},
+          {"name": "statusId", "description": "Foreign key to status.csv describing how the race ended for this driver."}
+        ]
+      }
+    },
+    {
+      "path": "qualifying.csv",
+      "description": "Qualifying session results per driver per race, including Q1/Q2/Q3 times and grid position.",
+      "schema": {
+        "fields": [
+          {"name": "qualifyId", "description": "Unique identifier for the qualifying result (primary key)."},
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "constructorId", "description": "Foreign key to constructors.csv."},
+          {"name": "number", "description": "Car number used in qualifying."},
+          {"name": "position", "description": "Qualifying position, which sets the starting grid."},
+          {"name": "q1", "description": "Q1 session lap time, or \\N if not set."},
+          {"name": "q2", "description": "Q2 session lap time, or \\N if the driver didn't advance to Q2."},
+          {"name": "q3", "description": "Q3 session lap time, or \\N if the driver didn't advance to Q3."}
+        ]
+      }
+    },
+    {
+      "path": "sprint_results.csv",
+      "description": "Sprint race classification results, same structure as results.csv, for race weekends with a sprint format.",
+      "schema": {
+        "fields": [
+          {"name": "resultId", "description": "Unique identifier for the sprint result (primary key)."},
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "constructorId", "description": "Foreign key to constructors.csv."},
+          {"name": "number", "description": "Car number used in the sprint."},
+          {"name": "grid", "description": "Sprint starting grid position."},
+          {"name": "position", "description": "Final classified sprint finishing position, or \\N if unclassified."},
+          {"name": "positionText", "description": "Finishing position as text; non-numeric codes for unclassified results."},
+          {"name": "positionOrder", "description": "Numeric finishing order for sorting."},
+          {"name": "points", "description": "Championship points scored in the sprint."},
+          {"name": "laps", "description": "Laps completed."},
+          {"name": "time", "description": "Sprint finishing time (leader) or gap to leader, or \\N."},
+          {"name": "milliseconds", "description": "Sprint time in milliseconds, or \\N."},
+          {"name": "fastestLap", "description": "Lap number of the driver's fastest lap in the sprint, or \\N."},
+          {"name": "fastestLapTime", "description": "Fastest sprint lap time, or \\N."},
+          {"name": "statusId", "description": "Foreign key to status.csv describing how the sprint ended for this driver."}
+        ]
+      }
+    },
+    {
+      "path": "pit_stops.csv",
+      "description": "Individual pit stop records: which lap, stop number, time of day, and duration per driver per race.",
+      "schema": {
+        "fields": [
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "stop", "description": "Stop number for this driver in this race (1st stop, 2nd stop, etc)."},
+          {"name": "lap", "description": "Lap on which the stop occurred."},
+          {"name": "time", "description": "Time of day the stop occurred."},
+          {"name": "duration", "description": "Pit stop duration in seconds."},
+          {"name": "milliseconds", "description": "Pit stop duration in milliseconds."}
+        ]
+      }
+    },
+    {
+      "path": "lap_times.csv",
+      "description": "Lap-by-lap timing per driver per race (position and time each lap). Does not yet include 2025/2026 data - see README.",
+      "schema": {
+        "fields": [
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "lap", "description": "Lap number."},
+          {"name": "position", "description": "Driver's race position at the end of this lap."},
+          {"name": "time", "description": "Lap time."},
+          {"name": "milliseconds", "description": "Lap time in milliseconds."}
+        ]
+      }
+    },
+    {
+      "path": "driver_standings.csv",
+      "description": "Championship standings for drivers after each race: cumulative points, position, and wins.",
+      "schema": {
+        "fields": [
+          {"name": "driverStandingsId", "description": "Unique identifier for this standings row (primary key)."},
+          {"name": "raceId", "description": "Foreign key to races.csv - standings as of after this race."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "points", "description": "Cumulative championship points through this race."},
+          {"name": "position", "description": "Championship standing position."},
+          {"name": "positionText", "description": "Standing position as text."},
+          {"name": "wins", "description": "Cumulative race wins through this race."}
+        ]
+      }
+    },
+    {
+      "path": "constructor_standings.csv",
+      "description": "Championship standings for constructors (teams) after each race: cumulative points, position, and wins.",
+      "schema": {
+        "fields": [
+          {"name": "constructorStandingsId", "description": "Unique identifier for this standings row (primary key)."},
+          {"name": "raceId", "description": "Foreign key to races.csv - standings as of after this race."},
+          {"name": "constructorId", "description": "Foreign key to constructors.csv."},
+          {"name": "points", "description": "Cumulative championship points through this race."},
+          {"name": "position", "description": "Championship standing position."},
+          {"name": "positionText", "description": "Standing position as text."},
+          {"name": "wins", "description": "Cumulative race wins through this race."}
+        ]
+      }
+    },
+    {
+      "path": "constructor_results.csv",
+      "description": "Points scored by each constructor in each race, aggregated across both of their drivers.",
+      "schema": {
+        "fields": [
+          {"name": "constructorResultsId", "description": "Unique identifier for this row (primary key)."},
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "constructorId", "description": "Foreign key to constructors.csv."},
+          {"name": "points", "description": "Total points scored by the constructor in this race."},
+          {"name": "status", "description": "'D' if the constructor was disqualified from this race, otherwise \\N."}
+        ]
+      }
+    },
+    {
+      "path": "drivers.csv",
+      "description": "Driver lookup table: name, code, permanent number, date of birth, and nationality.",
+      "schema": {
+        "fields": [
+          {"name": "driverId", "description": "Unique identifier for the driver (primary key)."},
+          {"name": "driverRef", "description": "URL-safe reference slug for the driver."},
+          {"name": "number", "description": "Permanent car number, or \\N if none assigned."},
+          {"name": "code", "description": "Three-letter driver code, or \\N if none assigned."},
+          {"name": "forename", "description": "Driver's given name."},
+          {"name": "surname", "description": "Driver's family name."},
+          {"name": "dob", "description": "Date of birth."},
+          {"name": "nationality", "description": "Driver's nationality."},
+          {"name": "url", "description": "Wikipedia page for the driver."}
+        ]
+      }
+    },
+    {
+      "path": "constructors.csv",
+      "description": "Constructor (team) lookup table: name and nationality.",
+      "schema": {
+        "fields": [
+          {"name": "constructorId", "description": "Unique identifier for the constructor (primary key)."},
+          {"name": "constructorRef", "description": "URL-safe reference slug for the constructor."},
+          {"name": "name", "description": "Constructor/team name."},
+          {"name": "nationality", "description": "Constructor's nationality."},
+          {"name": "url", "description": "Wikipedia page for the constructor."}
+        ]
+      }
+    },
+    {
+      "path": "circuits.csv",
+      "description": "Circuit lookup table: name, location, country, and geographic coordinates.",
+      "schema": {
+        "fields": [
+          {"name": "circuitId", "description": "Unique identifier for the circuit (primary key)."},
+          {"name": "circuitRef", "description": "URL-safe reference slug for the circuit."},
+          {"name": "name", "description": "Circuit name."},
+          {"name": "location", "description": "City or locality."},
+          {"name": "country", "description": "Country."},
+          {"name": "lat", "description": "Latitude."},
+          {"name": "lng", "description": "Longitude."},
+          {"name": "alt", "description": "Altitude in meters. Set to 0 as a placeholder for circuits added after 2024 where this data isn't available from the source API."},
+          {"name": "url", "description": "Wikipedia page for the circuit."}
+        ]
+      }
+    },
+    {
+      "path": "seasons.csv",
+      "description": "One row per championship season (year), with a link to that season's overview.",
+      "schema": {
+        "fields": [
+          {"name": "year", "description": "Championship season (primary key)."},
+          {"name": "url", "description": "Wikipedia page for that season."}
+        ]
+      }
+    },
+    {
+      "path": "status.csv",
+      "description": "Lookup table of race finishing status codes (e.g. Finished, Retired, Disqualified, Did not start).",
+      "schema": {
+        "fields": [
+          {"name": "statusId", "description": "Unique identifier for the status (primary key)."},
+          {"name": "status", "description": "Human-readable status text, referenced by results.csv and sprint_results.csv."}
+        ]
+      }
+    },
+    {
+      "path": "README.md",
+      "description": "What was added in this extension, known data gaps, and the update methodology."
+    }
+  ]
+}
