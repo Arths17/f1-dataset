@@ -2,6 +2,8 @@
 
 **Maintained by:** Atharv Ranjan
 
+**GitHub:** [github.com/Arths17/f1-dataset](https://github.com/Arths17/f1-dataset) — open issues or PRs here to contribute.
+
 ## What was added
 
 - **35 new completed races**: the full 2025 season (24 races) plus every completed round of the 2026 season through the **Hungarian Grand Prix (2026-07-26, round 11)**.
