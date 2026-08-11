@@ -26,12 +26,18 @@ def get_completed_rounds(season):
 
 
 def main():
+    existing_path = OUT_DIR / "weather.csv"
+    existing = pd.read_csv(existing_path) if existing_path.exists() else pd.DataFrame(columns=["raceId"])
+    already_done = set(existing["raceId"])
+
     weather_rows = []
     failures = []
 
     for season in SEASONS:
         for rnd in get_completed_rounds(season):
             race_id = BASE_RACES[(BASE_RACES.year == season) & (BASE_RACES["round"] == rnd)]["raceId"].iloc[0]
+            if race_id in already_done:
+                continue
             print(f"{season} round {rnd} (raceId {race_id})...")
             try:
                 session = fastf1.get_session(season, rnd, "R")
@@ -61,9 +67,10 @@ def main():
             })
             time.sleep(1)
 
-    df = pd.DataFrame(weather_rows).sort_values("raceId")
+    new_df = pd.DataFrame(weather_rows)
+    df = pd.concat([existing, new_df], ignore_index=True).drop_duplicates(subset="raceId").sort_values("raceId")
     df.to_csv(OUT_DIR / "weather.csv", index=False)
-    print(f"\nWrote {len(df)} race-weather rows to {OUT_DIR / 'weather.csv'}")
+    print(f"\nAdded {len(new_df)} new race-weather rows, {len(df)} total, written to {OUT_DIR / 'weather.csv'}")
     if failures:
         print(f"\n{len(failures)} races failed to load:")
         for season, rnd, err in failures:

@@ -31,6 +31,10 @@ def get_completed_rounds(season):
 
 
 def main():
+    existing_path = OUT_DIR / "practice_results.csv"
+    existing = pd.read_csv(existing_path) if existing_path.exists() else pd.DataFrame(columns=["raceId"])
+    already_done = set(existing["raceId"])
+
     rows = []
     failures = []
     skipped_drivers = set()
@@ -38,6 +42,8 @@ def main():
     for season in SEASONS:
         for rnd in get_completed_rounds(season):
             race_id = BASE_RACES[(BASE_RACES.year == season) & (BASE_RACES["round"] == rnd)]["raceId"].iloc[0]
+            if race_id in already_done:
+                continue
             for sess_name in SESSIONS:
                 print(f"{season} round {rnd} {sess_name} (raceId {race_id})...")
                 try:
@@ -72,9 +78,11 @@ def main():
                     })
                 time.sleep(1)
 
-    df = pd.DataFrame(rows).sort_values(["raceId", "session", "position"])
+    new_df = pd.DataFrame(rows)
+    df = pd.concat([existing, new_df], ignore_index=True)
+    df = df.drop_duplicates(subset=["raceId", "driverId", "session"]).sort_values(["raceId", "session", "position"])
     df.to_csv(OUT_DIR / "practice_results.csv", index=False)
-    print(f"\nWrote {len(df)} practice-result rows to {OUT_DIR / 'practice_results.csv'}")
+    print(f"\nAdded {len(new_df)} new practice-result rows, {len(df)} total, written to {OUT_DIR / 'practice_results.csv'}")
     if skipped_drivers:
         print(f"\nSkipped {len(skipped_drivers)} driver codes not in drivers.csv (reserve/test drivers, practice-only): {sorted(skipped_drivers)}")
     if failures:
