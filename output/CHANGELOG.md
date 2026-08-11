@@ -1,5 +1,8 @@
 # Changelog
 
+## v8 - 2026-08-11
+- Regenerated `SCHEMA.md` to include `tire_stints.csv`, `weather.csv`, and `practice_results.csv` (it had gone stale after those tables were added).
+
 ## v7 - 2026-08-11
 - Added `practice_results.csv`: FP1/FP2/FP3 session results (best lap time, laps, rank) per driver per race, sourced from official F1 live timing via FastF1. Covers the 2025/2026 races only. Reserve/test drivers who only ran practice are excluded.
 

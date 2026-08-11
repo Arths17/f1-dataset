@@ -1,6 +1,6 @@
 # Schema
 
-Full column reference for all 14 tables in this dataset.
+Full column reference for all 17 tables in this dataset.
 
 ## races.csv
 
@@ -220,6 +220,47 @@ Lookup table of race finishing status codes (e.g. Finished, Retired, Disqualifie
 | `statusId` | Unique identifier for the status (primary key). |
 | `status` | Human-readable status text, referenced by results.csv and sprint_results.csv. |
 
-## README.md
+## practice_results.csv
 
-What was added in this extension, known data gaps, and the update methodology.
+Free practice (FP1/FP2/FP3) session results per driver per race, sourced from official F1 live timing via FastF1. Covers only the 2025/2026 races added by this extension - not available for 1950-2024. Reserve/test drivers who ran practice sessions but didn't race are not included, since they aren't in drivers.csv.
+
+| Column | Description |
+|---|---|
+| `raceId` | Foreign key to races.csv. |
+| `driverId` | Foreign key to drivers.csv. |
+| `session` | Which practice session: FP1, FP2, or FP3. |
+| `position` | Rank within the session by best lap time (1 = fastest). |
+| `bestLapTime` | Driver's fastest lap time in this session. |
+| `laps` | Number of laps completed in this session. |
+
+## weather.csv
+
+Per-race weather summary (aggregated from minute-by-minute samples), sourced from official F1 live timing via FastF1. Covers only the 2025/2026 races added by this extension - not available for 1950-2024.
+
+| Column | Description |
+|---|---|
+| `raceId` | Foreign key to races.csv. |
+| `airTempAvg` | Average air temperature during the race (°C). |
+| `airTempMin` | Minimum air temperature during the race (°C). |
+| `airTempMax` | Maximum air temperature during the race (°C). |
+| `trackTempAvg` | Average track surface temperature during the race (°C). |
+| `trackTempMin` | Minimum track surface temperature during the race (°C). |
+| `trackTempMax` | Maximum track surface temperature during the race (°C). |
+| `humidityAvg` | Average relative humidity during the race (%). |
+| `windSpeedAvg` | Average wind speed during the race (m/s). |
+| `windSpeedMax` | Maximum wind speed during the race (m/s). |
+| `rainfall` | True if rain was recorded at any point during the race. |
+
+## tire_stints.csv
+
+Tire strategy per driver per race, sourced from official F1 live timing via FastF1. Covers only the 2025/2026 races added by this extension - not available for 1950-2024.
+
+| Column | Description |
+|---|---|
+| `raceId` | Foreign key to races.csv. |
+| `driverId` | Foreign key to drivers.csv. |
+| `stint` | Stint number for this driver in this race (1st stint, 2nd stint, etc). |
+| `compound` | Tire compound used this stint (SOFT, MEDIUM, HARD, INTERMEDIATE, WET), or \N if unknown. |
+| `startLap` | First lap of this stint. |
+| `endLap` | Last lap of this stint. |
+| `lapsOnTire` | Number of laps completed on this set of tires (endLap - startLap + 1). |
