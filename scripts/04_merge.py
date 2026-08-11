@@ -364,11 +364,41 @@ ps_out = pd.concat([ps_df, pd.DataFrame(ps_rows)], ignore_index=True) if ps_rows
 ps_out.to_csv(OUT_DIR / "pit_stops.csv", index=False)
 
 # ---------- lap_times.csv ----------
-# Skipped for 2025-2026: Jolpica's lap-by-lap endpoint hit a sustained hourly
-# rate limit. Base data is carried through unchanged; can be backfilled later
-# with a separate, more slowly-paced fetch run.
 lt_df = pd.read_csv(BASE_DIR / "lap_times.csv")
-lt_df.to_csv(OUT_DIR / "lap_times.csv", index=False)
+lt_rows = []
+for season in SEASONS:
+    for (s, rnd), race_id in race_id_lookup.items():
+        if s != season:
+            continue
+        data = load_json(f"laps_{season}_{rnd}")
+        races = data.get("MRData", {}).get("RaceTable", {}).get("Races", [])
+        if not races:
+            continue
+        for lap in races[0].get("Laps", []):
+            lap_num = int(lap["number"])
+            for timing in lap.get("Timings", []):
+                t = timing["time"]
+                minutes, rest = (t.split(":") + [None])[:2] if ":" in t else (None, t)
+                millis = 0
+                try:
+                    if minutes is not None:
+                        m = int(minutes)
+                        sec = float(rest)
+                        millis = m * 60000 + int(round(sec * 1000))
+                    else:
+                        millis = int(round(float(rest) * 1000))
+                except (ValueError, TypeError):
+                    millis = 0
+                lt_rows.append({
+                    "raceId": race_id,
+                    "driverId": driver_map[timing["driverId"]],
+                    "lap": lap_num,
+                    "position": int(timing.get("position", 0)),
+                    "time": t,
+                    "milliseconds": millis,
+                })
+lt_out = pd.concat([lt_df, pd.DataFrame(lt_rows)], ignore_index=True) if lt_rows else lt_df
+lt_out.to_csv(OUT_DIR / "lap_times.csv", index=False)
 
 # ---------- driver_standings.csv ----------
 ds_df = pd.read_csv(BASE_DIR / "driver_standings.csv")

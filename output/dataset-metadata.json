@@ -2,7 +2,7 @@
   "title": "Formula 1 World Championship (1950-2026)",
   "id": "atharvranjan/formula-1-world-championship-1950-present",
   "subtitle": "F1 data from 1950-2026, updated after every race",
-  "description": "A complete Formula 1 statistics dataset spanning every World Championship race, driver, constructor, and result from 1950 through the current 2026 season. This is built on top of the well-established 1950-2024 F1 dataset structure, extended with full 2025 season data and every completed round of 2026, and is kept current - updated after every race weekend.\n\nThe dataset covers 14 relational tables: races, results, qualifying, sprint results, pit stops, lap times, driver and constructor standings, plus lookup tables for drivers, constructors, circuits, seasons, and finishing status codes. It's designed for anyone doing F1 analysis, predictive modeling, or historical research - from career trajectories and team performance over decades to lap-by-lap race pace in recent seasons.\n\nSee the README for full details on what's new in this version, known data gaps, and the update methodology.\n\nGitHub: https://github.com/Arths17/f1-dataset — source of the update scripts, and where you can open issues or PRs to contribute.",
+  "description": "A complete Formula 1 statistics dataset spanning every World Championship race, driver, constructor, and result from 1950 through the current 2026 season. This is built on top of the well-established 1950-2024 F1 dataset structure, extended with full 2025 season data and every completed round of 2026, and is kept current - updated after every race weekend.\n\nThe dataset covers 17 relational tables: races, results, qualifying, sprint results, pit stops, lap times, tire stints, weather, practice session results, driver and constructor standings, plus lookup tables for drivers, constructors, circuits, seasons, and finishing status codes. It's designed for anyone doing F1 analysis, predictive modeling, or historical research - from career trajectories and team performance over decades to lap-by-lap race pace in recent seasons.\n\nSee the README for full details on what's new in this version, known data gaps, and the update methodology.\n\nGitHub: https://github.com/Arths17/f1-dataset — source of the update scripts, and where you can open issues or PRs to contribute.",
   "licenses": [{"name": "CC0-1.0"}],
   "keywords": ["sports"],
   "isPrivate": false,
@@ -241,8 +241,64 @@
       }
     },
     {
+      "path": "practice_results.csv",
+      "description": "Free practice (FP1/FP2/FP3) session results per driver per race, sourced from official F1 live timing via FastF1. Covers only the 2025/2026 races added by this extension - not available for 1950-2024. Reserve/test drivers who ran practice sessions but didn't race are not included, since they aren't in drivers.csv.",
+      "schema": {
+        "fields": [
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "session", "description": "Which practice session: FP1, FP2, or FP3."},
+          {"name": "position", "description": "Rank within the session by best lap time (1 = fastest)."},
+          {"name": "bestLapTime", "description": "Driver's fastest lap time in this session."},
+          {"name": "laps", "description": "Number of laps completed in this session."}
+        ]
+      }
+    },
+    {
+      "path": "weather.csv",
+      "description": "Per-race weather summary (aggregated from minute-by-minute samples), sourced from official F1 live timing via FastF1. Covers only the 2025/2026 races added by this extension - not available for 1950-2024.",
+      "schema": {
+        "fields": [
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "airTempAvg", "description": "Average air temperature during the race (°C)."},
+          {"name": "airTempMin", "description": "Minimum air temperature during the race (°C)."},
+          {"name": "airTempMax", "description": "Maximum air temperature during the race (°C)."},
+          {"name": "trackTempAvg", "description": "Average track surface temperature during the race (°C)."},
+          {"name": "trackTempMin", "description": "Minimum track surface temperature during the race (°C)."},
+          {"name": "trackTempMax", "description": "Maximum track surface temperature during the race (°C)."},
+          {"name": "humidityAvg", "description": "Average relative humidity during the race (%)."},
+          {"name": "windSpeedAvg", "description": "Average wind speed during the race (m/s)."},
+          {"name": "windSpeedMax", "description": "Maximum wind speed during the race (m/s)."},
+          {"name": "rainfall", "description": "True if rain was recorded at any point during the race."}
+        ]
+      }
+    },
+    {
+      "path": "tire_stints.csv",
+      "description": "Tire strategy per driver per race, sourced from official F1 live timing via FastF1. Covers only the 2025/2026 races added by this extension - not available for 1950-2024.",
+      "schema": {
+        "fields": [
+          {"name": "raceId", "description": "Foreign key to races.csv."},
+          {"name": "driverId", "description": "Foreign key to drivers.csv."},
+          {"name": "stint", "description": "Stint number for this driver in this race (1st stint, 2nd stint, etc)."},
+          {"name": "compound", "description": "Tire compound used this stint (SOFT, MEDIUM, HARD, INTERMEDIATE, WET), or \\N if unknown."},
+          {"name": "startLap", "description": "First lap of this stint."},
+          {"name": "endLap", "description": "Last lap of this stint."},
+          {"name": "lapsOnTire", "description": "Number of laps completed on this set of tires (endLap - startLap + 1)."}
+        ]
+      }
+    },
+    {
       "path": "README.md",
       "description": "What was added in this extension, known data gaps, and the update methodology."
+    },
+    {
+      "path": "SCHEMA.md",
+      "description": "Standalone data dictionary listing every column across all 14 tables, for reference outside the Kaggle Data Card."
+    },
+    {
+      "path": "CHANGELOG.md",
+      "description": "Version history: what changed in each update to this dataset."
     }
   ]
 }
