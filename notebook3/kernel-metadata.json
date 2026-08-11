@@ -1,0 +1,16 @@
+{
+  "id": "atharvranjan/f1-2026-tire-strategy-weather",
+  "title": "F1 2025-2026 Tire Strategy and Weather",
+  "code_file": "tire_strategy_weather.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "false",
+  "enable_gpu": "false",
+  "enable_tpu": "false",
+  "enable_internet": "false",
+  "machine_shape": "",
+  "dataset_sources": ["atharvranjan/formula-1-world-championship-1950-present"],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
