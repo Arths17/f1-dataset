@@ -21,8 +21,8 @@ for f in FILES:
 
 races = pd.read_csv(OUT_DIR / "races.csv")
 print(f"\nTotal races: {len(races)}")
-print(f"2025 races: {len(races[races.year == 2025])}")
-print(f"2026 races: {len(races[races.year == 2026])}")
+for yr, count in races[races.year >= 2025].groupby("year").size().items():
+    print(f"{yr} races: {count}")
 races["date"] = pd.to_datetime(races["date"])
 latest = races.sort_values("date").iloc[-1]
 print(f"Most recent race: {latest['name']} on {latest['date'].date()} (round {latest['round']}, {latest['year']})")
@@ -42,8 +42,8 @@ for f, pk in pk_map.items():
     status = "OK" if dupes == 0 else f"DUPLICATES: {dupes}"
     print(f"  {f:<28} pk={pk:<24} {status}")
 
-print("\n=== Spot check: most recent race (Hungarian GP 2026-07-26) results ===")
-race_id = races[(races.year == 2026) & (races["name"].str.contains("Hungarian"))]["raceId"].iloc[0]
+print(f"\n=== Spot check: most recent race ({latest['name']} {latest['date'].date()}) results ===")
+race_id = latest["raceId"]
 results = pd.read_csv(OUT_DIR / "results.csv")
 drivers = pd.read_csv(OUT_DIR / "drivers.csv")
 top5 = results[results.raceId == race_id].sort_values("positionOrder").head(5)
