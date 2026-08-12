@@ -16,7 +16,7 @@ RAW_DIR = ROOT / "working" / "raw_jolpica"
 OUT_DIR = ROOT / "output"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-SEASONS = [2025, 2026]
+SEASONS = list(range(2025, date.today().year + 1))
 NA = "\\N"
 TODAY = date.today()
 

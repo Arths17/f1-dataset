@@ -5,6 +5,7 @@ start/end lap, and stint length. Historical (pre-2025) tire data isn't in
 scope here - this only covers the same 35 races already extended.
 """
 import time
+from datetime import date
 from pathlib import Path
 
 import fastf1
@@ -21,7 +22,7 @@ DRIVERS = pd.read_csv(OUT_DIR / "drivers.csv")
 
 code_to_id = dict(zip(DRIVERS["code"].dropna(), DRIVERS["driverId"]))
 
-SEASONS = [2025, 2026]
+SEASONS = list(range(2025, date.today().year + 1))
 
 
 def get_completed_rounds(season):

@@ -4,6 +4,7 @@ timing weather feed). One row per race: aggregated air/track temperature,
 humidity, wind, and whether it rained during the session.
 """
 import time
+from datetime import date
 from pathlib import Path
 
 import fastf1
@@ -17,7 +18,7 @@ fastf1.Cache.enable_cache(str(CACHE_DIR))
 OUT_DIR = ROOT / "output"
 BASE_RACES = pd.read_csv(OUT_DIR / "races.csv")
 
-SEASONS = [2025, 2026]
+SEASONS = list(range(2025, date.today().year + 1))
 
 
 def get_completed_rounds(season):

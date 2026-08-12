@@ -13,7 +13,7 @@ BASE_URL = "https://api.jolpi.ca/ergast/f1"
 RAW_DIR = Path(__file__).resolve().parent.parent / "working" / "raw_jolpica"
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-SEASONS = [2025, 2026]
+SEASONS = list(range(2025, date.today().year + 1))
 REQUEST_DELAY = 2.0
 PAGE_LIMIT = 1000
 TODAY = date.today()

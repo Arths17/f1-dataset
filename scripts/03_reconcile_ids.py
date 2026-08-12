@@ -5,6 +5,7 @@ circuitRef) and status text. New entities not present in the base dataset
 get freshly minted sequential IDs, logged for manual review.
 """
 import json
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -14,7 +15,7 @@ BASE_DIR = ROOT / "working" / "base"
 RAW_DIR = ROOT / "working" / "raw_jolpica"
 OUT_DIR = ROOT / "working"
 
-SEASONS = [2025, 2026]
+SEASONS = list(range(2025, date.today().year + 1))
 
 
 def load_json(name: str) -> dict:

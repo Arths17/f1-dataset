@@ -6,6 +6,7 @@ drivers not in drivers.csv) are skipped with a warning - they didn't race
 so aren't part of the existing dataset's driver lookup.
 """
 import time
+from datetime import date
 from pathlib import Path
 
 import fastf1
@@ -21,7 +22,7 @@ BASE_RACES = pd.read_csv(OUT_DIR / "races.csv")
 DRIVERS = pd.read_csv(OUT_DIR / "drivers.csv")
 code_to_id = dict(zip(DRIVERS["code"].dropna(), DRIVERS["driverId"]))
 
-SEASONS = [2025, 2026]
+SEASONS = list(range(2025, date.today().year + 1))
 SESSIONS = ["FP1", "FP2", "FP3"]
 
 
